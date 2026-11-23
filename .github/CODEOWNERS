@@ -1,0 +1,9 @@
+# Mirsad CODEOWNERS — plan.md §16.1 requires owners for security-sensitive paths.
+# GitHub org/repo member names are TBD (plan.md §22). Uncomment and fill in
+# real handles once the Lead confirms them; do not invent usernames.
+#
+# services/worker/egress/   @<lead-architect> @<security-specialist>
+# supabase/policies/        @<lead-architect> @<security-specialist>
+# supabase/migrations/      @<lead-architect>
+# infra/                    @<lead-architect> @<fullstack-engineer>
+# .github/workflows/        @<lead-architect>
