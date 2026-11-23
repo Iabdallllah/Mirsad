@@ -1,0 +1,13 @@
+[project]
+name = "mirsad-supabase-tests"
+version = "0.0.0"
+description = "RLS isolation, audit immutability, bootstrap, and Storage policy tests against Supabase local."
+requires-python = ">=3.12"
+dependencies = [
+    "pytest==8.4.2",
+    "psycopg[binary]==3.2.9",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
