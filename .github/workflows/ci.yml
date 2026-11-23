@@ -146,6 +146,14 @@ jobs:
               `NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8000/api/v1`,
               `NEXT_PUBLIC_APP_URL=http://127.0.0.1:3000`,
             ].join("\n") + "\n");
+            // Next skips .env.local when NODE_ENV=test (Playwright). .env.test.local
+            // is loaded in the test environment, so write it too.
+            fs.writeFileSync("apps/web/.env.test.local", [
+              `NEXT_PUBLIC_SUPABASE_URL=${env.API_URL}`,
+              `NEXT_PUBLIC_SUPABASE_ANON_KEY=${env.ANON_KEY}`,
+              `NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8000/api/v1`,
+              `NEXT_PUBLIC_APP_URL=http://127.0.0.1:3000`,
+            ].join("\n") + "\n");
           '
 
       - name: Database security/RLS tests
@@ -163,6 +171,14 @@ jobs:
           uv run pytest -q -m integration
 
       - run: npx playwright install --with-deps chromium
+
+      - name: Debug Next env loading
+        run: |
+          echo "NODE_ENV=${NODE_ENV:-<unset>}"
+          ls -la apps/web/.env* 2>/dev/null || true
+          grep '^NEXT_PUBLIC_SUPABASE_URL=' apps/web/.env.local apps/web/.env.test.local 2>/dev/null || true
+          cd apps/web
+          node -e "const {loadEnvConfig}=require('@next/env'); const r=loadEnvConfig(process.cwd(), true); console.log('loaded URL =', r.combinedEnv.NEXT_PUBLIC_SUPABASE_URL); console.log('loaded files =', r.loadedEnvFiles.map(f=>f.path));"
 
       - name: Playwright E2E
         run: npx playwright test
