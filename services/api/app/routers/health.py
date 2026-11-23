@@ -7,12 +7,16 @@ root-level matches the monitoring/deployment sections.)
 
 from __future__ import annotations
 
+import logging
+
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 
 from app.db import get_pool
 from app.errors import ApiError
 from app.schemas import HealthOut, ReadyChecks, ReadyOut
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(tags=["health"])
 
@@ -39,8 +43,9 @@ async def ready(request: Request) -> JSONResponse:
             # Queue table exists and is queryable (worker consumption is Phase 1).
             await conn.fetchval("select count(*) from public.scan_jobs where status = 'queued'")
             queue_ok = True
-    except Exception:  # noqa: BLE001 - readiness must degrade, not crash
-        pass
+    except Exception as exc:  # noqa: BLE001 - readiness must degrade, not crash
+        # Log the failure class only: no stack, connection string, or row data.
+        logger.warning("readiness dependency check failed: %s", type(exc).__name__)
 
     body = ReadyOut(
         status="ok" if database_ok and queue_ok else "not_ready",
