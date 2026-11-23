@@ -4,7 +4,7 @@ version = "0.0.0"
 description = "Mirsad FastAPI API — auth validation, workspace APIs, webhooks (plan.md §4.3, §10)."
 requires-python = ">=3.12"
 dependencies = [
-    "fastapi==0.115.12",
+    "fastapi==0.165.0",
     "uvicorn==0.34.2",
     "pydantic==2.11.7",
     "pydantic-settings==2.9.1",
