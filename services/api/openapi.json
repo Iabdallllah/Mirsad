@@ -1,0 +1,280 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Mirsad API",
+    "version": "0.0.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "health"
+        ],
+        "summary": "Health",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthOut"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ready": {
+      "get": {
+        "tags": [
+          "health"
+        ],
+        "summary": "Ready",
+        "operationId": "ready_ready_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadyOut"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/me": {
+      "get": {
+        "tags": [
+          "me"
+        ],
+        "summary": "Me",
+        "operationId": "me_api_v1_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeOut"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "HealthOut": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "default": "ok"
+          },
+          "app_env": {
+            "type": "string",
+            "title": "App Env"
+          }
+        },
+        "type": "object",
+        "required": [
+          "app_env"
+        ],
+        "title": "HealthOut"
+      },
+      "MeOut": {
+        "properties": {
+          "user": {
+            "$ref": "#/components/schemas/UserOut"
+          },
+          "workspace": {
+            "$ref": "#/components/schemas/WorkspaceOut"
+          },
+          "usage": {
+            "$ref": "#/components/schemas/UsageOut"
+          }
+        },
+        "type": "object",
+        "required": [
+          "user",
+          "workspace",
+          "usage"
+        ],
+        "title": "MeOut"
+      },
+      "ReadyChecks": {
+        "properties": {
+          "database": {
+            "type": "boolean",
+            "title": "Database"
+          },
+          "queue": {
+            "type": "boolean",
+            "title": "Queue"
+          }
+        },
+        "type": "object",
+        "required": [
+          "database",
+          "queue"
+        ],
+        "title": "ReadyChecks"
+      },
+      "ReadyOut": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "checks": {
+            "$ref": "#/components/schemas/ReadyChecks"
+          },
+          "worker": {
+            "type": "string",
+            "title": "Worker",
+            "default": "not_deployed"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "checks"
+        ],
+        "title": "ReadyOut"
+      },
+      "UsageOut": {
+        "properties": {
+          "domains_used": {
+            "type": "integer",
+            "title": "Domains Used"
+          },
+          "domains_limit": {
+            "type": "integer",
+            "title": "Domains Limit"
+          },
+          "scans_used": {
+            "type": "integer",
+            "title": "Scans Used"
+          },
+          "scans_per_month": {
+            "type": "integer",
+            "title": "Scans Per Month"
+          },
+          "period_start": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Period Start"
+          },
+          "period_end": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Period End"
+          }
+        },
+        "type": "object",
+        "required": [
+          "domains_used",
+          "domains_limit",
+          "scans_used",
+          "scans_per_month",
+          "period_start",
+          "period_end"
+        ],
+        "title": "UsageOut"
+      },
+      "UserOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "github_username": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Github Username"
+          },
+          "avatar_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avatar Url"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "title": "UserOut"
+      },
+      "WorkspaceOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "plan": {
+            "type": "string",
+            "title": "Plan"
+          },
+          "role": {
+            "type": "string",
+            "title": "Role"
+          },
+          "suspended_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Suspended At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "plan",
+          "role"
+        ],
+        "title": "WorkspaceOut"
+      }
+    }
+  }
+}
