@@ -1,0 +1,143 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+   Mirsad design tokens — design.md §8.1 (dark theme, the only v1 theme).
+   Approved palette is non-negotiable; derived surfaces are computed, not
+   hand-picked. Semantic status colors are PROPOSED / TBD design sign-off
+   (design.md §3.3): every status must pair color + icon + text.
+   --------------------------------------------------------------------------- */
+:root {
+  /* Approved palette */
+  --color-bg: #0f1523;
+  --color-secondary: #4a289a;
+  --color-accent: #44ecf1;
+  --color-text: #e8e8fa;
+
+  /* Derived surfaces */
+  --color-surface-1: color-mix(in srgb, var(--color-text) 4%, var(--color-bg));
+  --color-surface-2: color-mix(in srgb, var(--color-text) 7%, var(--color-bg));
+  --color-border: color-mix(in srgb, var(--color-text) 14%, transparent);
+  --color-border-strong: color-mix(in srgb, var(--color-text) 24%, transparent);
+  --color-text-muted: color-mix(in srgb, var(--color-text) 64%, var(--color-bg));
+  --color-text-faint: color-mix(in srgb, var(--color-text) 42%, var(--color-bg));
+
+  /* Semantic — PROPOSED, TBD sign-off (never color-only meaning) */
+  --color-critical: #ff6b81;
+  --color-high: #ff9f43;
+  --color-medium: #ffd166;
+  --color-low: #7bd88f;
+  --color-success: #3ddc97;
+  --color-warning: #ffb020;
+  --color-info: #8fb8ff;
+
+  /* Typography (font families loaded via next/font in layout.tsx) */
+  --font-display: var(--font-syne), "Syne", system-ui, sans-serif;
+  --font-sans: var(--font-inter), "Inter", system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), "JetBrains Mono", ui-monospace, monospace;
+
+  /* Spacing (4px base) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-full: 9999px;
+
+  /* Focus */
+  --focus-ring: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-accent);
+
+  /* Motion */
+  --motion-fast: 120ms;
+  --motion-base: 180ms;
+  --motion-slow: 280ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* Tailwind mapping — design.md §8.2: semantic class names only, no raw hex
+   in components. `inline` keeps utilities pointing at the runtime tokens. */
+@theme inline {
+  --color-bg: var(--color-bg);
+  --color-secondary: var(--color-secondary);
+  --color-accent: var(--color-accent);
+  --color-text: var(--color-text);
+  --color-surface-1: var(--color-surface-1);
+  --color-surface-2: var(--color-surface-2);
+  --color-border: var(--color-border);
+  --color-border-strong: var(--color-border-strong);
+  --color-text-muted: var(--color-text-muted);
+  --color-text-faint: var(--color-text-faint);
+  --color-critical: var(--color-critical);
+  --color-high: var(--color-high);
+  --color-medium: var(--color-medium);
+  --color-low: var(--color-low);
+  --color-success: var(--color-success);
+  --color-warning: var(--color-warning);
+  --color-info: var(--color-info);
+
+  --font-display: var(--font-display);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-full: var(--radius-full);
+
+  --animate-duration-fast: var(--motion-fast);
+  --animate-duration-base: var(--motion-base);
+  --animate-duration-slow: var(--motion-slow);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 24px;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+  }
+
+  :focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+    border-radius: var(--radius-sm);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@utility tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
