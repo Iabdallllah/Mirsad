@@ -1,0 +1,39 @@
+[project]
+name = "mirsad-worker"
+version = "0.0.0"
+description = "Mirsad Python worker — Phase 0 stub; LangGraph scan engine lands in Phase 1 (plan.md §3.2)."
+requires-python = ">=3.12"
+dependencies = [
+    "pydantic==2.11.7",
+    "pydantic-settings==2.9.1",
+]
+
+[dependency-groups]
+dev = [
+    "pytest==8.4.2",
+    "ruff==0.11.13",
+    "mypy==1.16.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["mirsad_worker"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+files = ["mirsad_worker", "tests"]
