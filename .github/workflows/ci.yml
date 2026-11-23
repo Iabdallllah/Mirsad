@@ -124,7 +124,14 @@ jobs:
                 .split(/\r?\n/).filter((line) => line.includes("="))
                 .map((line) => {
                   const i = line.indexOf("=");
-                  return [line.slice(0, i), line.slice(i + 1)];
+                  let value = line.slice(i + 1).trim();
+                  if (
+                    (value.startsWith('"') && value.endsWith('"')) ||
+                    (value.startsWith("'") && value.endsWith("'"))
+                  ) {
+                    value = value.slice(1, -1);
+                  }
+                  return [line.slice(0, i), value];
                 }),
             );
             if (!env.API_URL || !env.ANON_KEY) {
@@ -171,14 +178,6 @@ jobs:
           uv run pytest -q -m integration
 
       - run: npx playwright install --with-deps chromium
-
-      - name: Debug Next env loading
-        run: |
-          echo "NODE_ENV=${NODE_ENV:-<unset>}"
-          ls -la apps/web/.env* 2>/dev/null || true
-          grep '^NEXT_PUBLIC_SUPABASE_URL=' apps/web/.env.local apps/web/.env.test.local 2>/dev/null || true
-          cd apps/web
-          node -e "const {loadEnvConfig}=require('@next/env'); const r=loadEnvConfig(process.cwd(), true); console.log('loaded URL =', r.combinedEnv.NEXT_PUBLIC_SUPABASE_URL); console.log('loaded files =', r.loadedEnvFiles.map(f=>f.path));"
 
       - name: Playwright E2E
         run: npx playwright test
