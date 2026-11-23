@@ -18,8 +18,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: "22"
           cache: npm
@@ -42,8 +42,8 @@ jobs:
       run:
         working-directory: services/api
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
       - run: python -m pip install uv==0.11.29
@@ -60,8 +60,8 @@ jobs:
       run:
         working-directory: services/worker
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
       - run: python -m pip install uv==0.11.29
@@ -75,7 +75,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - run: docker build -f infra/docker/api.Dockerfile -t mirsad-api:ci .
       - run: docker build -f infra/docker/worker.Dockerfile -t mirsad-worker:ci .
       - name: API image health smoke test
@@ -96,12 +96,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: "22"
           cache: npm
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
 
@@ -124,15 +124,42 @@ jobs:
                 .split(/\r?\n/).filter((line) => line.includes("="))
                 .map((line) => {
                   const i = line.indexOf("=");
-                  return [line.slice(0, i), line.slice(i + 1)];
+                  let value = line.slice(i + 1).trim();
+                  if (
+                    (value.startsWith('"') && value.endsWith('"')) ||
+                    (value.startsWith("'") && value.endsWith("'"))
+                  ) {
+                    value = value.slice(1, -1);
+                  }
+                  return [line.slice(0, i), value];
                 }),
             );
+            if (!env.API_URL || !env.ANON_KEY) {
+              throw new Error("supabase status did not provide API_URL/ANON_KEY");
+            }
             fs.writeFileSync(".env.test", [
               `NEXT_PUBLIC_SUPABASE_URL=${env.API_URL}`,
               `NEXT_PUBLIC_SUPABASE_ANON_KEY=${env.ANON_KEY}`,
               `SUPABASE_SERVICE_ROLE_KEY=${env.SERVICE_ROLE_KEY}`,
               `SUPABASE_DB_URL=${env.DB_URL}`,
               `DATABASE_URL=${env.DB_URL}`,
+            ].join("\n") + "\n");
+            // Next dev reads NEXT_PUBLIC_* from apps/web/.env.local on disk;
+            // writing it here avoids relying on process-env propagation through
+            // the Playwright webServer -> npm -> next chain.
+            fs.writeFileSync("apps/web/.env.local", [
+              `NEXT_PUBLIC_SUPABASE_URL=${env.API_URL}`,
+              `NEXT_PUBLIC_SUPABASE_ANON_KEY=${env.ANON_KEY}`,
+              `NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8000/api/v1`,
+              `NEXT_PUBLIC_APP_URL=http://127.0.0.1:3000`,
+            ].join("\n") + "\n");
+            // Next skips .env.local when NODE_ENV=test (Playwright). .env.test.local
+            // is loaded in the test environment, so write it too.
+            fs.writeFileSync("apps/web/.env.test.local", [
+              `NEXT_PUBLIC_SUPABASE_URL=${env.API_URL}`,
+              `NEXT_PUBLIC_SUPABASE_ANON_KEY=${env.ANON_KEY}`,
+              `NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8000/api/v1`,
+              `NEXT_PUBLIC_APP_URL=http://127.0.0.1:3000`,
             ].join("\n") + "\n");
           '
 
@@ -157,7 +184,7 @@ jobs:
 
       - name: Upload Playwright diagnostics
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-diagnostics
           path: |

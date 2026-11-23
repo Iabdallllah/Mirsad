@@ -13,6 +13,7 @@ build/
 # Environment — never commit real values (AGENTS.md §4)
 .env
 .env.*
+.env*.local
 !.env.example
 !.env.test.example
 

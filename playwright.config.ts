@@ -10,7 +10,16 @@ function loadEnvFile(path: string): Record<string, string> {
         .filter((line) => line.includes("=") && !line.trimStart().startsWith("#"))
         .map((line) => {
           const index = line.indexOf("=");
-          return [line.slice(0, index).trim(), line.slice(index + 1).trim()];
+          let value = line.slice(index + 1).trim();
+          // `supabase status -o env` quotes values; strip surrounding quotes so
+          // process.env gets a bare URL/key (quotes would break createClient).
+          if (
+            (value.startsWith('"') && value.endsWith('"')) ||
+            (value.startsWith("'") && value.endsWith("'"))
+          ) {
+            value = value.slice(1, -1);
+          }
+          return [line.slice(0, index).trim(), value];
         }),
     );
   } catch {
