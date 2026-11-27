@@ -53,7 +53,7 @@ jobs:
       - run: uv run pytest -q -m "not integration"
 
   worker:
-    name: Worker — ruff, mypy, unit
+    name: Worker — ruff, mypy, unit, security
     runs-on: ubuntu-latest
     timeout-minutes: 15
     defaults:
@@ -69,6 +69,11 @@ jobs:
       - run: uv run ruff check .
       - run: uv run mypy
       - run: uv run pytest -q
+      - name: Security suite — SSRF/egress + canary sanitizer
+        run: |
+          uv run ruff check ../../tests/security
+          uv run mypy ../../tests/security
+          uv run pytest -q ../../tests/security
 
   containers:
     name: Containers — build API/worker images

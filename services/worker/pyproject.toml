@@ -1,9 +1,11 @@
 [project]
 name = "mirsad-worker"
 version = "0.0.0"
-description = "Mirsad Python worker — Phase 0 stub; LangGraph scan engine lands in Phase 1 (plan.md §3.2)."
+description = "Mirsad Python worker — Phase 1 egress/SSRF guard and PII sanitizer; crawler and agents in progress (plan.md §3.2)."
 requires-python = ">=3.12"
 dependencies = [
+    "httpcore==1.0.9",
+    "httpx==0.28.1",
     "pydantic==2.11.7",
     "pydantic-settings==2.9.1",
 ]
@@ -13,6 +15,7 @@ dev = [
     "pytest==8.4.2",
     "ruff==0.11.13",
     "mypy==1.16.0",
+    "pytest-asyncio==0.26.0",
 ]
 
 [build-system]
