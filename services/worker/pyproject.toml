@@ -7,7 +7,7 @@ dependencies = [
     "httpcore==1.0.9",
     "httpx==0.28.1",
     "pydantic==2.11.7",
-    "pydantic-settings==2.9.1",
+    "pydantic-settings==2.16.3",
 ]
 
 [dependency-groups]
