@@ -1,7 +1,8 @@
 """Mirsad worker package.
 
-Phase 0 (Foundation): configuration + idle entrypoint only. The queue
-consumer, egress guard, LangGraph orchestrator, and Red/Blue agents are
-Phase 1 deliverables (plan.md §3.2). Nothing in this stub performs outbound
-requests or touches customer data.
+Phase 0 (Foundation): configuration + idle entrypoint. Phase 1 adds the
+code-level egress/SSRF guard (``mirsad_worker.egress``) and the deterministic
+PII sanitizer (``mirsad_worker.sanitizer``). The queue consumer, crawler, and
+LangGraph agents are still pending (plan.md §3.2). The idle entrypoint itself
+performs no outbound requests and touches no customer data.
 """
